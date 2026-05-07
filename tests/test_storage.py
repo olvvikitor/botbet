@@ -1,7 +1,9 @@
 import json
 import tempfile
 import os
-from storage import load_apostas, save_aposta
+import pytest
+from unittest.mock import AsyncMock, MagicMock, patch
+from storage import load_apostas, save_aposta, download_image
 
 
 def test_load_apostas_empty_file():
@@ -39,3 +41,25 @@ def test_save_appends_to_existing():
         assert result[1]["id"] == 2
     finally:
         os.unlink(tmp)
+
+
+@pytest.mark.asyncio
+async def test_download_image_returns_path():
+    mock_msg = AsyncMock()
+    mock_msg.download_media = AsyncMock()
+    mock_msg.id = 12345
+
+    with patch("storage.os.makedirs"):
+        path = await download_image(None, mock_msg, "data/images")
+        assert path is not None
+        assert "12345" in path
+        mock_msg.download_media.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_download_image_no_media_returns_none():
+    mock_msg = AsyncMock()
+    mock_msg.media = None
+
+    path = await download_image(None, mock_msg, "data/images")
+    assert path is None
