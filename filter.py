@@ -9,10 +9,20 @@ def is_user_thumbs_up(emoji):
 
 
 def register_handler(client, group_name, callback):
+    me = None
+
     @client.on(events.MessageReaction)
     async def handler(event):
+        nonlocal me
+        if me is None:
+            me = await client.get_me()
+
         chat = await event.get_chat()
         if chat.title != group_name:
+            return
+
+        # Only process if the reaction came from our user
+        if event.peer_id.user_id != me.id:
             return
 
         for reaction in event.reactions:

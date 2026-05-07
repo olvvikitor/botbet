@@ -42,7 +42,7 @@ async def process_message(client, message):
         "mensagem_link": f"https://t.me/c/{message.peer_id.channel_id}/{message.id}",
     }
 
-    save_aposta(aposta)
+    await save_aposta(aposta)
     print(f"[{now.strftime('%H:%M:%S')}] Aposta salva: {aposta['evento']} | {aposta['porcentagem_banca']}%")
 
 
