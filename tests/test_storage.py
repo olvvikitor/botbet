@@ -2,7 +2,7 @@ import json
 import tempfile
 import os
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 from storage import load_apostas, save_aposta, download_image
 
 
@@ -53,7 +53,7 @@ async def test_download_image_returns_path():
         path = await download_image(None, mock_msg, "data/images")
         assert path is not None
         assert "12345" in path
-        mock_msg.download_media.assert_called_once()
+        mock_msg.download_media.assert_called_once_with(file=path)
 
 
 @pytest.mark.asyncio
