@@ -1,0 +1,5 @@
+telethon>=1.36
+openai>=1.0
+python-dotenv>=1.0
+pytest>=8.0
+pytest-asyncio>=0.24
