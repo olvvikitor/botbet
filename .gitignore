@@ -3,4 +3,4 @@ __pycache__/
 *.pyc
 .pytest_cache/
 data/apostas.json
-data/images/
+data/images/*
