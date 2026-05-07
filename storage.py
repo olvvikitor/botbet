@@ -1,6 +1,5 @@
 import json
 import os
-from datetime import datetime
 
 
 def load_apostas(filepath="data/apostas.json"):
