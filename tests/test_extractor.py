@@ -37,3 +37,9 @@ def test_extract_percentage_with_dot():
     text = "aposta 2.5% da unidade"
     result = extract_text_info(text)
     assert result["porcentagem_banca"] == 2.5
+
+
+def test_extract_none_text():
+    result = extract_text_info(None)
+    assert result["porcentagem_banca"] is None
+    assert result["link_casa"] is None
