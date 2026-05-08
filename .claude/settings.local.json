@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Recurse -Depth 2)",
+      "Bash(Select-Object Mode, Name, Directory)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(python main.py)",
+      "Bash(Get-Content *)",
+      "PowerShell(Get-Item *)",
+      "mcp__ide__executeCode",
+      "Bash(python test_vision_api.py)",
+      "Bash(python -c ' *)",
+      "Bash(python test_regex.py)",
+      "Bash(python -m pytest tests/test_extractor.py -v)"
+    ]
+  }
+}

@@ -45,6 +45,13 @@ async def analyze_image(image_path, api_key):
             )
 
             raw = response.choices[0].message.content
+            if not raw:
+                print(f"[vision] resposta vazia", flush=True)
+                return {"evento": None, "mercado": None, "odd": None}
+            raw = raw.strip()
+            # strip markdown code fences
+            lines = [l for l in raw.split("\n") if not l.startswith("```")]
+            raw = "\n".join(lines).strip()
             data = json.loads(raw)
             return {
                 "evento": data.get("evento"),
@@ -52,7 +59,9 @@ async def analyze_image(image_path, api_key):
                 "odd": data.get("odd"),
             }
         except Exception as e:
+            raw_db = locals().get("raw", "<not assigned>")
             print(f"[vision] attempt {attempt + 1}/3: {type(e).__name__}: {e}", flush=True)
+            print(f"[vision] raw response was: {raw_db!r}", flush=True)
             if attempt < 2:
                 await asyncio.sleep(2 ** attempt)
 

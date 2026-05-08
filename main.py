@@ -5,10 +5,10 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 from client import create_client, start_client
-from filter import register_handler
+from filter import scan_messages
 from extractor import extract_text_info
 from vision import analyze_image
-from storage import save_aposta, download_image
+from storage import save_aposta, download_image, export_csv
 
 load_dotenv()
 
@@ -21,6 +21,13 @@ async def process_message(client, message):
     text = message.text or ""
 
     info = extract_text_info(text)
+
+    if "❌" in text:
+        resultado = "red"
+    elif "✅" in text:
+        resultado = "green"
+    else:
+        resultado = "pending"
 
     image_path = await download_image(client, message)
 
@@ -39,7 +46,8 @@ async def process_message(client, message):
         "porcentagem_banca": info["porcentagem_banca"],
         "link_casa": info["link_casa"],
         "imagem_path": image_path,
-        "mensagem_link": f"https://t.me/c/{message.peer_id.channel_id}/{message.id}",
+        "mensagem_link": f"https://t.me/c/{message.peer_id.chat_id}/{message.id}",
+        "resultado": resultado,
     }
 
     await save_aposta(aposta)
@@ -48,11 +56,10 @@ async def process_message(client, message):
 
 async def main():
     client = create_client()
+
     await start_client(client)
-    register_handler(client, GROUP_NAME, process_message)
-    print(f"Ouvindo reacoes no grupo: {GROUP_NAME}")
-    print("Pressione Ctrl+C para parar.")
-    await client.run_until_disconnected()
+    await scan_messages(client, GROUP_NAME, process_message)
+    export_csv()
 
 
 if __name__ == "__main__":

@@ -1,9 +1,10 @@
+import csv
 import json
 import tempfile
 import os
 import pytest
 from unittest.mock import AsyncMock, patch
-from storage import load_apostas, save_aposta, download_image
+from storage import CSV_HEADERS, clear_csv, load_apostas, save_aposta, download_image
 
 
 def test_load_apostas_empty_file():
@@ -13,6 +14,30 @@ def test_load_apostas_empty_file():
     try:
         result = load_apostas(tmp)
         assert result == []
+    finally:
+        os.unlink(tmp)
+
+
+def test_load_apostas_blank_file_returns_empty_list():
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+        f.write("   \n")
+        tmp = f.name
+    try:
+        result = load_apostas(tmp)
+        assert result == []
+    finally:
+        os.unlink(tmp)
+
+
+def test_clear_csv_keeps_only_header():
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False, encoding="utf-8") as f:
+        f.write("old,line\n1,2\n")
+        tmp = f.name
+    try:
+        clear_csv(tmp)
+        with open(tmp, newline="", encoding="utf-8") as csv_file:
+            rows = list(csv.reader(csv_file))
+        assert rows == [CSV_HEADERS]
     finally:
         os.unlink(tmp)
 

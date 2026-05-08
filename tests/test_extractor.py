@@ -2,10 +2,10 @@ from extractor import extract_text_info
 
 
 def test_extract_percentage_and_link():
-    text = "Aposta do dia - 2% da unidade - https://bet365.com/apoio"
+    text = "Aposta do dia - 2% da unidade - https://bet365.bet/apoio"
     result = extract_text_info(text)
     assert result["porcentagem_banca"] == 2.0
-    assert result["link_casa"] == "https://bet365.com/apoio"
+    assert result["link_casa"] == "https://bet365.bet/apoio"
 
 
 def test_extract_percentage_with_comma():
@@ -28,9 +28,9 @@ def test_extract_no_link():
 
 
 def test_extract_multiple_urls_picks_first():
-    text = "2% - https://bet365.com e https://1xbet.com"
+    text = "2% - https://bet365.bet e https://1xbet.bet"
     result = extract_text_info(text)
-    assert result["link_casa"] == "https://bet365.com"
+    assert result["link_casa"] == "https://bet365.bet"
 
 
 def test_extract_percentage_with_dot():
@@ -43,3 +43,9 @@ def test_extract_none_text():
     result = extract_text_info(None)
     assert result["porcentagem_banca"] is None
     assert result["link_casa"] is None
+
+
+def test_strip_trailing_paren():
+    text = "[BETANO](https://www.betano.bet.br/bookingcode/ABC123)"
+    result = extract_text_info(text)
+    assert result["link_casa"] == "https://www.betano.bet.br/bookingcode/ABC123"

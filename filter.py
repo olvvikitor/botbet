@@ -1,34 +1,13 @@
-from telethon import events
-from telethon.tl.types import UpdateMessageReactions, ReactionEmoji
+from datetime import datetime
 
 
-THUMBS_UP_EMOJIS = {"👍", "👍🏻", "👍🏼", "👍🏽", "👍🏾", "👍🏿"}
+async def scan_messages(client, group_name, callback):
+    chat = await client.get_entity(int(group_name))
+    hoje = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
+    count = 0
+    async for message in client.iter_messages(chat, offset_date=hoje, reverse=True):
+        await callback(client, message)
+        count += 1
 
-def is_user_thumbs_up(emoji):
-    return emoji in THUMBS_UP_EMOJIS
-
-
-def register_handler(client, group_name, callback):
-    @client.on(events.Raw)
-    async def handler(update):
-        if not isinstance(update, UpdateMessageReactions):
-            return
-
-        chat = await client.get_entity(update.peer)
-        if chat.title != group_name:
-            return
-
-        reactions = update.reactions
-        if not reactions.recent_reactions:
-            return
-
-        for r in reactions.recent_reactions:
-            if r.my and isinstance(r.reaction, ReactionEmoji):
-                if is_user_thumbs_up(r.reaction.emoticon):
-                    message = await client.get_messages(chat, ids=update.msg_id)
-                    if message:
-                        await callback(client, message)
-                    return
-
-    return handler
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] Scan concluido: {count} mensagens processadas.")

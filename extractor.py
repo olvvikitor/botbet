@@ -12,6 +12,8 @@ def extract_text_info(text):
     url_pattern = r"https?://[^\s]+"
     url_match = re.search(url_pattern, text)
     link = url_match.group(0) if url_match else None
+    if link:
+        link = link.rstrip("),;:.\"'")
 
     return {
         "porcentagem_banca": porcentagem,
