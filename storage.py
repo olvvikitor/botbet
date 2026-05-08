@@ -2,6 +2,7 @@ import asyncio
 import csv
 import json
 import os
+from datetime import datetime, timedelta
 from urllib.parse import urlparse
 
 _lock = asyncio.Lock()
@@ -79,8 +80,8 @@ def export_csv(json_filepath="data/apostas.json", csv_filepath="data/apostas.csv
         for a in apostas:
             data = a.get("data", "")
             if data and "-" in data:
-                parts = data.split("-")
-                data = f"{parts[2]}/{parts[1]}/{parts[0]}"
+                dt = datetime.strptime(data, "%Y-%m-%d") + timedelta(days=1)
+                data = dt.strftime("%d/%m/%Y")
 
             link = a.get("link_casa") or ""
             bookmaker = ""
